@@ -1,12 +1,12 @@
 # BotTom News
 
-Send the [daily video](https://www.tagesschau.de/100s/arabisch/) "Tagesschau in 100 Sekunden auf Arabisch" (German news in 100 seconds in Arabic) to a WhatsApp group with refugees.
+Sends the [daily video](https://www.tagesschau.de/100s/arabisch/) "Tagesschau in 100 Sekunden auf Arabisch" (German news in 100 seconds in Arabic) to a WhatsApp group with refugees.
 
 **Why?** Because [the ones I know](https://jonas-thelemann.de/portfolio/faq/#refugees) are - at the moment - not all able to understand complex German sentences and should still be informed about what is going on in Germany and the rest of our world.
 
 Nevertheless it should be easy to switch to the [German version](https://www.tagesschau.de/100sekunden/) of the "Tagesschau in 100 Sekunden" or even the [English one](http://www.tagesschau.de/100s/englisch/).
 
-**Why did you call this project "bottomnews"?** Because it creates a robot named "Tom" that can send news automatically directly from the (or ft.) source / the bottom.
+**Why did you call this project "bottomnews"?** Because it creates a robot named "Tom" that can send news automatically directly from the (or abbreviated "ft.", like in music titles) source / the bottom.
 
 **What else can this program do?** It answers private (but no group) messages in a realistic style. The visible steps are:
 
