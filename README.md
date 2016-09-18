@@ -8,6 +8,16 @@ Nevertheless it should be easy to switch to the [German version](https://www.tag
 
 **Why did you call this project "bottomnews"?** Because it creates a robot named "Tom" that can send news automatically directly from the (or ft.) source / the bottom.
 
+**What else can this program do?** It answers private (but no group) messages in a realistic style. The visible steps are:
+
+- Receive all messages
+- Come online
+- Read new messages for every contact
+- Write
+- "Check for mistakes" (stop typing)
+- Echo every last message (to prevent a ban)
+- Go offline
+
 **What is left to do?** The code is a modified version of [yowsup's cli demo](). It contains a lot of unused functions and other unneeded leftovers which can be removed. Also the variables every user has to set (see [Usage / Private Information](#privateinformation)) spread across different files and could be packed together into a single one.
 
 ## Installation
@@ -33,6 +43,10 @@ Files that contain asterisks and need personal configuration:
 - newsbot/layer.py ([L73](https://github.com/Dargmuesli/bottomnews/blob/master/newsbot/layer.py#L73), [L92](https://github.com/Dargmuesli/bottomnews/blob/master/newsbot/layer.py#L92), [L93](https://github.com/Dargmuesli/bottomnews/blob/master/newsbot/layer.py#L93), [L94](https://github.com/Dargmuesli/bottomnews/blob/master/newsbot/layer.py#L94))
 - newsbot/bottomnews.py ([L38](https://github.com/Dargmuesli/bottomnews/blob/master/newsbot/bottomnews.py#L38))
 - config
+
+### Execution
+
+The main executable is `bottomnews.py` which accepts the `--verbose` argument.
 
 ## Errors
 
