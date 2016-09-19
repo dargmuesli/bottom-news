@@ -22,7 +22,7 @@ Nevertheless it should be easy to switch to the [German version](https://www.tag
 
 ## Installation
 
-This project builds on top of [yowsup](https://github.com/tgalal/yowsup/) extension, an unofficial WhatsApp API written in Python. To install it follow these [installation instructions](https://github.com/tgalal/yowsup/#installation).
+This project builds on top of [yowsup], an unofficial WhatsApp API written in Python. To install it follow these [installation instructions](https://github.com/tgalal/yowsup/#installation).
 
 ## Usage
 
@@ -80,7 +80,7 @@ This problem stands somehow in relation to FFVideo, but is definitly a problem w
 
 ##### Solution
 
-The fix is admittedly dirty, but it works. Add `from ffvideo import VideoStream` to [yowsup/common/tools.py](https://github.com/tgalal/yowsup/blob/master/yowsup/common/tools.py) and change the `VideoTools` class to the following:
+The fix is admittedly dirty, but it works. Add `from ffvideo import VideoStream` to [/yowsup/common/tools.py](https://github.com/tgalal/yowsup/blob/master/yowsup/common/tools.py) and change the `VideoTools` class to the following:
 
 ```python
 class VideoTools:
@@ -120,7 +120,7 @@ No wonder, that's because `DownloadableMediaMessageProtocolEntity` actually has 
 
 ##### Solution
 
-Either replace the corresponding original files in `/yowsup/layers/protocol_media/protocolentities/` with a copy of [the fixed audio file](https://raw.githubusercontent.com/tanquetav/yowsup/75f548f78867ccc08821309d1c796b378d4b299d/yowsup/layers/protocol_media/protocolentities/message_media_downloadable_audio.py) and/or [the fixed video file](https://raw.githubusercontent.com/tanquetav/yowsup/75f548f78867ccc08821309d1c796b378d4b299d/yowsup/layers/protocol_media/protocolentities/message_media_downloadable_video.py) by @tanquetav or install [my GitHub repository Dargmuesli/yowsup-mediafix](https://github.com/Dargmuesli/yowsup-mediafix) the usual way.
+Either replace the corresponding original files in `/yowsup/layers/protocol_media/protocolentities/` with a copy of [the fixed audio file](https://raw.githubusercontent.com/tanquetav/yowsup/75f548f78867ccc08821309d1c796b378d4b299d/yowsup/layers/protocol_media/protocolentities/message_media_downloadable_audio.py) and/or [the fixed video file](https://raw.githubusercontent.com/tanquetav/yowsup/75f548f78867ccc08821309d1c796b378d4b299d/yowsup/layers/protocol_media/protocolentities/message_media_downloadable_video.py) by [tanquetav] or install [my GitHub repository Dargmuesli/yowsup-mediafix][1] the usual way.
 
 #### 3. Encoding
 
@@ -142,3 +142,151 @@ sys.setdefaultencoding('utf8')
 ```
 
 to [L32 f.](https://github.com/Dargmuesli/bottomnews/blob/master/newsbot/layer.py#L32).
+
+#### 4. Media
+
+##### Description
+
+Once I thought this bot was well tested enough I added it to the WhatsApp group
+with my friends. Well, it turned out that yowsup has problems handling some
+media message types like audio, location, document and url. So I quickly headed
+over to [jlguardi's yowsup fork](https://github.com/jlguardi/yowsup) and searched all commits for media related ones. I changed several files, but finally got it working.
+
+##### Solution
+
+###### `/layers/protocol_media/layer.py`
+
+Add the following two imports:
+
+```python
+from .protocolentities import DocumentDownloadableMediaMessageProtocolEntity
+from .protocolentities import UrlMediaMessageProtocolEntity
+```
+
+Append these `elif`-checks to the large `if`-statement in the middle:
+
+```python
+elif mediaNode.getAttributeValue("type") == "url":
+    entity = UrlMediaMessageProtocolEntity.fromProtocolTreeNode(node)
+    self.toUpper(entity)
+elif mediaNode.getAttributeValue("type") == "document":
+    entity = DocumentDownloadableMediaMessageProtocolEntity.fromProtocolTreeNode(node)
+    self.toUpper(entity)
+```
+
+###### `/layers/protocol_media/protocolentities/__init__.py`
+
+This is a fairly simple addition:
+
+```python
+from .message_media_downloadable_document import DocumentDownloadableMediaMessageProtocolEntity
+from .message_media_url import UrlMediaMessageProtocolEntity
+```
+
+###### `/layers/axolotl/layer_receive.py`
+
+Again, append these `elif`-checks to the large `if`-statement in the middle:
+
+```python
+elif m.HasField("video_message"):
+    handled = True
+    self.handleVideoMessage(node, m.video_message)
+elif m.HasField("audio_message"):
+    handled = True
+    self.handleAudioMessage(node, m.audio_message)
+```
+
+```python
+Then add the appropriate message handler functions:
+
+def handleAudioMessage(self, originalEncNode, audioMessage):
+    messageNode = copy.deepcopy(originalEncNode)
+    messageNode["type"] = "media"
+    mediaNode = ProtocolTreeNode("media", {
+        "type": "audio",
+        "filehash": audioMessage.file_sha256,
+        "size": str(audioMessage.file_length),
+        "url": audioMessage.url,
+        "mimetype": audioMessage.mime_type,
+        "duration": str(audioMessage.duration),
+        "seconds": str(audioMessage.duration),
+        "encoding": "raw",
+        "file": "enc",
+        "ip": "0",
+        "mediakey": audioMessage.media_key
+    })
+    messageNode.addChild(mediaNode)
+
+    self.toUpper(messageNode)
+
+def handleVideoMessage(self, originalEncNode, videoMessage):
+    messageNode = copy.deepcopy(originalEncNode)
+    messageNode["type"] = "media"
+    mediaNode = ProtocolTreeNode("media", {
+        "type": "video",
+        "filehash": videoMessage.file_sha256,
+        "size": str(videoMessage.file_length),
+        "url": videoMessage.url,
+        "mimetype": videoMessage.mime_type,
+        "duration": str(videoMessage.duration),
+        "seconds": str(videoMessage.duration),
+        "caption": videoMessage.caption,
+        "encoding": "raw",
+        "file": "enc",
+        "ip": "0",
+        "mediakey": videoMessage.media_key
+    }, data = videoMessage.jpeg_thumbnail)
+    messageNode.addChild(mediaNode)
+
+    self.toUpper(messageNode)
+```
+
+If you want you can also fix the already present but empty message handler functions for url and document messages a little bit further down:
+
+```python
+def handleUrlMessage(self, originalEncNode, urlMessage):
+    messageNode = copy.deepcopy(originalEncNode)
+    messageNode["type"] = "media"
+    mediaNode = ProtocolTreeNode("media", {
+        "type": "url",
+        "text": urlMessage.text,
+        "match": urlMessage.matched_text,
+        "url": urlMessage.canonical_url,
+        "description": urlMessage.description,
+        "title": urlMessage.title
+    }, data = urlMessage.jpeg_thumbnail)
+    messageNode.addChild(mediaNode)
+
+    self.toUpper(messageNode)
+
+def handleDocumentMessage(self, originalEncNode, documentMessage):
+    messageNode = copy.deepcopy(originalEncNode)
+    messageNode["type"] = "media"
+    mediaNode = ProtocolTreeNode("media", {
+        "type": "document",
+        "url": documentMessage.url,
+        "mimetype": documentMessage.mime_type,
+        "title": documentMessage.title,
+        "filehash": documentMessage.file_sha256,
+        "size": str(documentMessage.file_length),
+        "pages": str(documentMessage.page_count),
+        "mediakey": documentMessage.media_key
+    }, data = documentMessage.jpeg_thumbnail)
+    messageNode.addChild(mediaNode)
+
+    self.toUpper(messageNode)
+```
+
+The last step is to correct a spelling mistake. Search for `degress_longitude` and replace it with `degrees_longitude`.
+
+###### `/layers/protocol_messages/wa.proto`
+
+This file needs to change almost in its entirety. Copy [the whole file in my fork][1].
+
+###### `/layers/protocol_messages/wa_pb2.py`
+
+The same applies to this file. Copy [the whole file in my fork][1].
+
+[yowsup]: https://github.com/tgalal/yowsup/
+[tanquetav]: https://github.com/tanquetav/
+[1]: https://github.com/Dargmuesli/yowsup-mediafix
