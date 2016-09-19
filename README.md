@@ -183,6 +183,14 @@ from .message_media_downloadable_document import DocumentDownloadableMediaMessag
 from .message_media_url import UrlMediaMessageProtocolEntity
 ```
 
+###### `/layers/protocol_media/protocolentities/message_media_downloadable_document.py`
+
+This is a whole new file. Copy [it from my fork][1].
+
+###### `/layers/protocol_media/protocolentities/message_media_url.py`
+
+The same applies to this file. Copy [it from my fork][1] too.
+
 ###### `/layers/axolotl/layer_receive.py`
 
 Again, append these `elif`-checks to the large `if`-statement in the middle:
@@ -279,14 +287,14 @@ def handleDocumentMessage(self, originalEncNode, documentMessage):
 
 The last step is to correct a spelling mistake. Search for `degress_longitude` and replace it with `degrees_longitude`.
 
-###### `/layers/protocol_messages/wa.proto`
+###### `/layers/protocol_messages/proto/wa.proto`
 
 This file needs to change almost in its entirety. Copy [the whole file in my fork][1].
 
-###### `/layers/protocol_messages/wa_pb2.py`
+###### `/layers/protocol_messages/proto/wa_pb2.py`
 
-The same applies to this file. Copy [the whole file in my fork][1].
+The same applies to this file. Copy [the whole file in my fork][1] too.
 
 [yowsup]: https://github.com/tgalal/yowsup/
 [tanquetav]: https://github.com/tanquetav/
-[1]: https://github.com/Dargmuesli/yowsup-mediafix
+[1]: https://github.com/Dargmuesli/yowsup/tree/bottomnews_fixes
