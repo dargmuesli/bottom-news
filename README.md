@@ -80,9 +80,11 @@ This problem stands somehow in relation to FFVideo, but is definitly a problem w
 
 ##### Solution
 
-The fix is admittedly dirty, but it works. Add `from ffvideo import VideoStream` to [/yowsup/common/tools.py](https://github.com/tgalal/yowsup/blob/master/yowsup/common/tools.py) and change the `VideoTools` class to the following:
+The fix is admittedly dirty, but it works. To [/yowsup/common/tools.py](https://github.com/tgalal/yowsup/blob/master/yowsup/common/tools.py) add one import and change the `VideoTools` class:
 
 ```python
+from ffvideo import VideoStream
+
 class VideoTools:
     @staticmethod
     def getVideoProperties(videoFile):
@@ -103,7 +105,7 @@ I simply removed this is both functions:
 
 ```python
     with FFVideoOptionalModule() as imp:
-    VideoStream = imp("VideoStream")
+        VideoStream = imp("VideoStream")
 ```
 
 #### 2. Attribute
