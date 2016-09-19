@@ -143,7 +143,11 @@ reload(sys)
 sys.setdefaultencoding('utf8')
 ```
 
-to [L32 f.](https://github.com/Dargmuesli/bottomnews/blob/master/newsbot/layer.py#L32).
+to [L32 f.](https://github.com/Dargmuesli/bottomnews/blob/master/newsbot/layer.py#L32). In [L47](https://github.com/Dargmuesli/bottomnews/blob/master/newsbot/layer.py#L47) I added just one `u`:
+
+```python
+MESSAGE_FORMAT = u"[{FROM}({TIME})]:[{MESSAGE_ID}]\t {MESSAGE}"
+```
 
 #### 4. Media
 
