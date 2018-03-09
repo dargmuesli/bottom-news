@@ -2,6 +2,17 @@
 
 Sends the [daily video](https://www.tagesschau.de/100s/arabisch/) "Tagesschau in 100 Sekunden auf Arabisch" (German news in 100 seconds in Arabic) to a WhatsApp group with refugees.
 
+## Table of Contents
+1. **[Overview](#Overview)**
+1. **[Installation](#Installation)**
+1. **[Usage](#Usage)**
+1. **[Errors](#Errors)**
+1. **[Results](#Results)**
+
+<a name="Overview"></a>
+
+## Overview
+
 **Why?** Because [the ones I know](https://jonas-thelemann.de/portfolio/faq/#refugees) are - at the moment - not all able to understand complex German sentences and should still be informed about what is going on in Germany and the rest of our world.
 
 Nevertheless it should be easy to switch to the [German version](https://www.tagesschau.de/100sekunden/) of the "Tagesschau in 100 Sekunden" or even the [English one](http://www.tagesschau.de/100s/englisch/).
@@ -20,9 +31,13 @@ Nevertheless it should be easy to switch to the [German version](https://www.tag
 
 **What is left to do?** The code is a modified version of [yowsup's cli demo](). It contains a lot of unused functions and other unneeded leftovers which can be removed. Also the variables every user has to set (see [Usage / Private Information](#privateinformation)) spread across different files and could be packed together into a single one.
 
+<a name="Installation"></a>
+
 ## Installation
 
 This project builds on top of [yowsup], an unofficial WhatsApp API written in Python. To install it follow these [installation instructions](https://github.com/tgalal/yowsup/#installation).
+
+<a name="Usage"></a>
 
 ## Usage
 
@@ -47,6 +62,8 @@ Files that contain asterisks and need personal configuration:
 ### Execution
 
 The main executable is `bottomnews.py` which accepts the `--verbose` argument.
+
+<a name="Errors"></a>
 
 ## Errors
 
@@ -300,6 +317,8 @@ This file needs to change almost in its entirety. Copy [the whole file in my for
 ###### `/layers/protocol_messages/proto/wa_pb2.py`
 
 The same applies to this file. Copy [the whole file in my fork][1] too.
+
+<a name="Results"></a>
 
 ## Results
 
