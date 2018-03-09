@@ -3,13 +3,18 @@
 Sends the [daily video](https://www.tagesschau.de/100s/arabisch/) "Tagesschau in 100 Sekunden auf Arabisch" (German news in 100 seconds in Arabic) to a WhatsApp group with refugees.
 
 ## Table of Contents
-1. **[Overview](#Overview)**
-1. **[Installation](#Installation)**
-1. **[Usage](#Usage)**
-1. **[Errors](#Errors)**
-1. **[Results](#Results)**
+1. **[Overview](#overview)**
+1. **[Installation](#installation)**
+1. **[Usage](#usage)**
+    1. **[Disclaimer](#disclaimer)**
+    1. **[Private Information](#private-information)**
+    1. **[Execution](#execution)**
+1. **[Errors](#errors)**
+    1. **[FFVideo](#ffvideo)**
+    1. **[yowsup](#yowsup)**
+1. **[Results](#results)**
 
-<a name="Overview"></a>
+<a name="overview"></a>
 
 ## Overview
 
@@ -31,15 +36,17 @@ Nevertheless it should be easy to switch to the [German version](https://www.tag
 
 **What is left to do?** The code is a modified version of [yowsup's cli demo](). It contains a lot of unused functions and other unneeded leftovers which can be removed. Also the variables every user has to set (see [Usage / Private Information](#privateinformation)) spread across different files and could be packed together into a single one.
 
-<a name="Installation"></a>
+<a name="installation"></a>
 
 ## Installation
 
 This project builds on top of [yowsup], an unofficial WhatsApp API written in Python. To install it follow these [installation instructions](https://github.com/tgalal/yowsup/#installation).
 
-<a name="Usage"></a>
+<a name="usage"></a>
 
 ## Usage
+
+<a name="disclaimer"></a>
 
 ### Disclaimer
 
@@ -49,7 +56,9 @@ First of all: WhatsApp does not allow the usage of yowsup. So here's a ...
 
 You risk a ban of your phone number which makes it impossible for your friends to contact you and a lot of work for you, e. g. if you've enabled 2 factor authentification on any website.
 
-### Private Information <a name="privateinformation"></a>
+<a name="private-information"></a>
+
+### Private Information
 
 Of course I did not include my real phone number, password and contact list in the source. You have to replace it with your data which can be obtained from [yowsup's registration instructions](https://github.com/tgalal/yowsup/wiki/yowsup-cli-2.0).
 
@@ -59,15 +68,19 @@ Files that contain asterisks and need personal configuration:
 - newsbot/bottomnews.py ([L38](https://github.com/Dargmuesli/bottomnews/blob/master/newsbot/bottomnews.py#L38))
 - config
 
+<a name="execution"></a>
+
 ### Execution
 
 The main executable is `bottomnews.py` which accepts the `--verbose` argument.
 
-<a name="Errors"></a>
+<a name="errors"></a>
 
 ## Errors
 
 It took me a long time to get yowsup running. There were several problems that did not only originate from yowsup itself. The following paragraphs describe the fixes I applied and offer a downloadable solution.
+
+<a name="ffvideo"></a>
 
 ### FFVideo
 
@@ -84,6 +97,8 @@ At the time of development (Q3 2016) FFVideo's extremely outdated version `0.0.1
 You can see my steps to the solution in [my comments under issue 1689](https://github.com/tgalal/yowsup/issues/1689#issuecomment-245154280) and a downloadable fix in [my GitHub repository Dargmuesli/FFVideo](https://bitbucket.org/Dargmuesli/ffvideo). Though, I do not guarantee endless availability.
 
 If you want to fix it yourself replace all occurrences of the string `r_frame_rate` with `avg_frame_rate` in the source file `FFVideo.c` and install that.
+
+<a name="yowsup"></a>
 
 ### Yowsup
 
@@ -318,7 +333,7 @@ This file needs to change almost in its entirety. Copy [the whole file in my for
 
 The same applies to this file. Copy [the whole file in my fork][1] too.
 
-<a name="Results"></a>
+<a name="results"></a>
 
 ## Results
 
