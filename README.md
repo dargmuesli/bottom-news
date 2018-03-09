@@ -301,6 +301,16 @@ This file needs to change almost in its entirety. Copy [the whole file in my for
 
 The same applies to this file. Copy [the whole file in my fork][1] too.
 
+## Results
+
+The deployment worked out well, without any issues. After several questions about the identity of `BotTom News` arose, I decided to ask the refugees whether they'd like to keep receiving daily news videos in our WhatsApp group. The answer an unmistakable "No":
+
+![Straw Poll](resources/strawpoll.png)
+
+Thus, I discontinued the bot's activity.
+
+Eventhough my offer was rejected, I learned much from reading and understanding yowsup's mostly undocumented source code and I'm glad that the refugees I know are completely honest with me.
+
 [yowsup]: https://github.com/tgalal/yowsup/
 [tanquetav]: https://github.com/tanquetav/
 [1]: https://github.com/Dargmuesli/yowsup/tree/bottomnews_fixes
