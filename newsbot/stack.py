@@ -1,4 +1,3 @@
-import logging
 import sys
 from yowsup.layers import YowLayerEvent
 from yowsup.layers.auth import AuthError

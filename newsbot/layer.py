@@ -2,11 +2,10 @@ import datetime
 import logging
 import os
 import sys
-import threading
 import time
 from collections import defaultdict
 from random import randint
-from threading import Timer
+from threading import Timer, Condition
 from yowsup.common import YowConstants
 from yowsup.common.optionalmodules import (AxolotlOptionalModule,
                                            PILOptionalModule)
@@ -15,17 +14,26 @@ from yowsup.layers import EventCallback, YowLayerEvent
 from yowsup.layers.auth import YowAuthenticationProtocolLayer
 from yowsup.layers.interface import ProtocolEntityCallback, YowInterfaceLayer
 from yowsup.layers.network import YowNetworkLayer
-from yowsup.layers.protocol_chatstate.protocolentities import *
-from yowsup.layers.protocol_contacts.protocolentities import *
-from yowsup.layers.protocol_groups.protocolentities import *
-from yowsup.layers.protocol_ib.protocolentities import *
-from yowsup.layers.protocol_iq.protocolentities import *
+from yowsup.layers.protocol_chatstate.protocolentities import OutgoingChatstateProtocolEntity, ChatstateProtocolEntity
+from yowsup.layers.protocol_contacts.protocolentities import GetStatusesIqProtocolEntity, GetSyncIqProtocolEntity
+from yowsup.layers.protocol_groups.protocolentities import ListGroupsIqProtocolEntity, LeaveGroupsIqProtocolEntity, \
+    CreateGroupsIqProtocolEntity, AddParticipantsIqProtocolEntity, PromoteParticipantsIqProtocolEntity, \
+    DemoteParticipantsIqProtocolEntity, RemoveParticipantsIqProtocolEntity, SubjectGroupsIqProtocolEntity, \
+    InfoGroupsIqProtocolEntity
+from yowsup.layers.protocol_ib.protocolentities import CleanIqProtocolEntity
+from yowsup.layers.protocol_iq.protocolentities import PingIqProtocolEntity, PushIqProtocolEntity, \
+    PropsIqProtocolEntity, CryptoIqProtocolEntity
 from yowsup.layers.protocol_media.mediauploader import MediaUploader
-from yowsup.layers.protocol_media.protocolentities import *
-from yowsup.layers.protocol_messages.protocolentities import *
-from yowsup.layers.protocol_presence.protocolentities import *
-from yowsup.layers.protocol_privacy.protocolentities import *
-from yowsup.layers.protocol_profiles.protocolentities import *
+from yowsup.layers.protocol_media.protocolentities import RequestUploadIqProtocolEntity, \
+    ImageDownloadableMediaMessageProtocolEntity, AudioDownloadableMediaMessageProtocolEntity, \
+    VideoDownloadableMediaMessageProtocolEntity
+from yowsup.layers.protocol_messages.protocolentities import TextMessageProtocolEntity, BroadcastTextMessage
+from yowsup.layers.protocol_presence.protocolentities import PresenceProtocolEntity, AvailablePresenceProtocolEntity, \
+    UnavailablePresenceProtocolEntity, UnsubscribePresenceProtocolEntity, SubscribePresenceProtocolEntity, \
+    LastseenIqProtocolEntity
+from yowsup.layers.protocol_privacy.protocolentities import PrivacyListIqProtocolEntity
+from yowsup.layers.protocol_profiles.protocolentities import SetStatusIqProtocolEntity, GetPictureIqProtocolEntity, \
+    SetPictureIqProtocolEntity, GetPrivacyIqProtocolEntity, SetPrivacyIqProtocolEntity, UnregisterIqProtocolEntity
 
 from .cli import Cli, clicmd
 
@@ -66,16 +74,16 @@ class YowsupNewsbotLayer(Cli, YowInterfaceLayer):
         self.credentials = None
 
         date = datetime.datetime.strptime(date, '%m.%d.%Y').date()
-        yesterday = date - datetime.timedelta(days=1)
+        # yesterday = date - datetime.timedelta(days=1)
         dayString = date.strftime("%m%d")
-        yesterdayString = yesterday.strftime("%m%d")
+        # yesterdayString = yesterday.strftime("%m%d")
         videoExtension = '.mp4'
         videoFolderName = '/home/*****/yowsup/newsbot/video'
         videoFileName = 'Tagesschau100sArabic'
         videoFileNameToday = videoFileName + dayString + videoExtension
-        videoFileNameYesterday = videoFileName + yesterdayString + videoExtension
+        # videoFileNameYesterday = videoFileName + yesterdayString + videoExtension
         videoFileTodayPath = videoFolderName + '/' + videoFileNameToday
-        videoFileYesterdayPath = videoFolderName + '/' + videoFileNameYesterday
+        # videoFileYesterdayPath = videoFolderName + '/' + videoFileNameYesterday
 
         self.date = date
         self.videoFileTodayPath = videoFileTodayPath
@@ -86,7 +94,7 @@ class YowsupNewsbotLayer(Cli, YowInterfaceLayer):
         self.messageTimer = None
         self.workingOff = False
         self.sendingMedia = False
-        self.lock = threading.Condition()
+        self.lock = Condition()
 
         self.jidAliases = {
             "*****": "************@s.whatsapp.net",
@@ -732,8 +740,7 @@ class YowsupNewsbotLayer(Cli, YowInterfaceLayer):
                 resultRequestUploadIqProtocolEntity.getResumeOffset(),
                 successFn,
                 self.onUploadError,
-                self.onUploadProgress,
-                async=False)
+                self.onUploadProgress)
             mediaUploader.start()
 
     def onRequestUploadError(self, jid, path,

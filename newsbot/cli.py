@@ -70,8 +70,6 @@ class Cli(object):
 ############################## cmd input parsing ###############################
 
     def print_usage(self):
-        line_width = 100
-
         outArr = []
 
         def addToOut(ind, cmd):

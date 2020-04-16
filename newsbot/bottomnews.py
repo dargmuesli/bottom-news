@@ -5,7 +5,6 @@
 import datetime
 import getopt
 import os
-import pprint
 import re
 import sys
 from subprocess import call
